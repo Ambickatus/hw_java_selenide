@@ -14,7 +14,7 @@ install:
   # & означает, что в фоновом режиме не блокируем терминал для запуска тестов,
   # обязательно должен быть для запуска SUT в CI
   - chmod +x gradlew
-    - java -jar ./artifacts/app-card-delivery.jar &
+  - java -jar ./artifacts/app-card-delivery.jar &
 
 build_script:
   # Запускаем автотесты
