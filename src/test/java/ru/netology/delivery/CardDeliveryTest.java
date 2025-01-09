@@ -30,7 +30,9 @@ public class CardDeliveryTest {
         $("[name='phone']").setValue("+71234567890");
         $("[data-test-id='agreement']").click();
         $$("button").find(Condition.exactText("Забронировать")).click();
-        $(Selectors.withText("Успешно!")).should(Condition.visible, Duration.ofSeconds(15));
+        $("[data-test-id=notification] .notification__content")
+                .shouldBe(Condition.visible, Duration.ofSeconds(15))
+                .shouldHave(text("Встреча успешно забронирована на " + planningDate));
     }
 
     @Test
@@ -41,35 +43,18 @@ public class CardDeliveryTest {
         open("http://localhost:9999");
         $("[placeholder='Город']").setValue("Мо");
         $$(".menu-item__control").findBy(exactText("Тамбов")).click();
-
-//        $("[placeholder='Дата встречи']").doubleClick().press(Keys.BACK_SPACE).setValue(planningDate);
         $(".icon_name_calendar").click();
 
-        if(LocalDate.now().plusDays(planningDays).getYear()==LocalDate.now().getYear()) {
-            if (LocalDate.now().plusDays(planningDays).getMonthValue()==LocalDate.now().getMonthValue()) {
-                $$(".calendar__day").find(exactText(generatedDate(planningDays, "d"))).click();
-            }
-            else {
-                for (int k = 0; k < (LocalDate.now().plusDays(planningDays).getMonthValue() - LocalDate.now().getMonthValue()); k++) {
-                    $("[data-step='1']").click();
-                }
-                $$(".calendar__day").find(exactText(generatedDate(planningDays, "d"))).click();
-            }
+        int difYears = LocalDate.now().plusDays(planningDays).getYear()-LocalDate.now().getYear();
+        int difMonths = LocalDate.now().plusDays(planningDays).getMonthValue()-LocalDate.now().getMonthValue();
+
+        for(int i=0; i<difYears; i++) {
+            $("[data-step='12']").click();
         }
-        else {
-            for(int j =0; j < (LocalDate.now().plusDays(planningDays).getYear()-LocalDate.now().getYear()); j++) {
-                $("[data-step='12']").click();
-            }
-            if (LocalDate.now().plusDays(planningDays).getMonthValue()==LocalDate.now().getMonthValue()) {
-                $$(".calendar__day").find(exactText(generatedDate(planningDays, "d"))).click();
-            }
-            else {
-                for (int k = 0; k < (LocalDate.now().plusDays(planningDays).getMonthValue() - LocalDate.now().getMonthValue()); k++) {
-                    $("[data-step='1']").click();
-                }
-                $$(".calendar__day").find(exactText(generatedDate(planningDays, "d"))).click();
-            }
+        for(int j=0; j<difMonths; j++) {
+            $("[data-step='1']").click();
         }
+        $$(".calendar__day").find(exactText(generatedDate(planningDays, "d"))).click();
 
         $("[name='name']").setValue("Сергеев Лазарь");
         $("[name='phone']").setValue("+71234567890");
@@ -80,3 +65,4 @@ public class CardDeliveryTest {
                 .shouldHave(text("Встреча успешно забронирована на " + planningDate));
     }
 }
+
